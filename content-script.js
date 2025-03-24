@@ -4,7 +4,7 @@ function selectSystem(hostname) {
     console.log(hostname);
     const systemSelector = document.getElementsByClassName('css-10l6kcd')[0];
     if (!systemSelector) {
-        console.log('Web page is not loaded yet');
+        console.log('System selector is not loaded yet');
         return;
     }
     systemSelector.click();
@@ -17,10 +17,17 @@ function selectSystem(hostname) {
 }
 
 function rotate(hosts, index = 0) {
-    setTimeout(() => rotate(hosts, newIndex), time);
-    selectSystem(hosts[index]);
     const newIndex = (index + 1) % hosts.length;
-    window.scrollTo(0, document.body.scrollHeight);
+    setTimeout(() => rotate(hosts, newIndex), time);
+
+    const view = document.getElementsByClassName('view')[0];
+    if (!view) {
+        console.log('View is not loaded yet');
+        return;
+    }
+    const viewScroll = view.scrollTop;
+    selectSystem(hosts[index]);
+    view.scrollTop = viewScroll;
 }
 
 const systemMap = {
