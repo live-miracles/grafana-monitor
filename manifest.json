@@ -1,0 +1,17 @@
+{
+    "manifest_version": 3,
+    "name": "Grafana Monitor",
+    "version": "0.0.0",
+    "description": "Grafana monitoring features",
+    "host_permissions": ["http://192.168.99.191:3000/d/TEST567/live_stream_servers*"],
+    "content_scripts": [
+        {
+            "matches": ["http://192.168.99.191:3000/d/TEST567/live_stream_servers*"],
+            "js": ["content-script.js"]
+        }
+    ],
+    "icons": {
+        "48": "grafana-48.png",
+        "128": "grafana-128.png"
+    }
+}
