@@ -111,16 +111,16 @@ function renderControls() {
             .map(
                 (k) =>
                     `<div class="badge badge-soft badge-primary m-1">
-              <input type="checkbox" class="checkbox checkbox-xs" />
-              <span class="name cursor-pointer uppercase">${k}</span>
-            </div>`,
+                      <input type="checkbox" class="checkbox checkbox-xs" />
+                      <span class="name cursor-pointer uppercase">${k}</span>
+                    </div>`,
             )
             .join('')}
       <div>
       <div class="my-3 mx-1">
           <input type="checkbox" checked="checked" class="toggle mr-3" />
           Auto rotate time
-          <input type="text" placeholder="sec" class="time input input-xs w-14" value="5"/>
+          <input type="number" min="1" placeholder="sec" class="time input w-16" value="5"/>
       </div>`;
     controls.innerHTML = innerHtml;
 
