@@ -67,13 +67,17 @@ function getTime() {
     return isNaN(time) ? 1 : Math.max(1, time);
 }
 
+function isRotateEnabled() {
+    return shadowRoot.querySelector('.toggle').checked;
+}
+
 function rotate(index = 0) {
     const names = getSelectedNames();
     const len = names.length;
     const newIndex = len === 0 ? 0 : (index + 1) % len;
     setTimeout(() => rotate(newIndex), getTime() * 1000);
 
-    if (names.length === 0) return;
+    if (names.length === 0 || !isRotateEnabled()) return;
     const view = document.getElementsByClassName('view')[0];
     if (!view) {
         console.log('View is not loaded yet');
