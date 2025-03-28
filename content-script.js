@@ -34,7 +34,15 @@ function selectSystem(name) {
         console.log('System selector is not loaded yet');
         return;
     }
+
+    const view = document.getElementsByClassName('view')[0];
+    if (!view) {
+        console.log('View is not loaded yet');
+        return;
+    }
+    const viewScroll = view.scrollTop;
     systemSelector.click();
+    view.scrollTop = viewScroll;
 
     const anchors = document.querySelectorAll('a.variable-option');
     const targetAnchor = Array.from(anchors).find((anchor) =>
@@ -78,14 +86,7 @@ function rotate(index = 0) {
     setTimeout(() => rotate(newIndex), getTime() * 1000);
 
     if (names.length === 0 || !isRotateEnabled()) return;
-    const view = document.getElementsByClassName('view')[0];
-    if (!view) {
-        console.log('View is not loaded yet');
-        return;
-    }
-    const viewScroll = view.scrollTop;
     selectSystem(names[index]);
-    view.scrollTop = viewScroll;
 }
 
 function createShadowRoot() {
