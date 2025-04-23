@@ -1,30 +1,35 @@
 console.log('Hi from Grafana extension');
 
 const SYSTEM_MAP = {
-    m1: 'IFIYCLSDT033',
-    m2: 'IFIYCLSDT002',
-    m3: 'IFIYCLSDT007',
-    m4: 'IFIYCLSDT036',
-    m5: 'IFIYCLSDT030',
-    m6: 'IFIYCLSDT005',
-    m7: 'IFIYCLSDT029',
-    m8: 'IFIYCLSDT016',
-    m9: 'IFIYCLSDT0015',
-    m10: 'IFIYCLSDT034',
-    m11: 'IFIYCLSDT035',
-    m12: 'IFIYCLSDT024',
-    b1: 'IFIYCLSDT019',
-    b2: 'IFIYCLSDT010',
-    b3: 'IFIYCLSDT014',
-    b4: 'IFIYCLSDT037',
-    b5: 'IFIYCLSDT031',
-    b6: 'IFIYCLSDT017',
-    b7: 'IFIYCLSDT008',
-    b8: 'IFIYCLSDT003',
-    b9: 'IFIYCLSDT004',
-    b10: 'IFIYCLSDT018',
-    b11: 'IFIYCLSDT022',
-    b12: 'IFIYCLSDT009',
+    M1: 'IFIYCLSDT033',
+    M2: 'IFIYCLSDT002',
+    M3: 'IFIYCLSDT007',
+    M4: 'IFIYCLSDT036',
+    M5: 'IFIYCLSDT030',
+    M6: 'IFIYCLSDT005',
+    M7: 'IFIYCLSDT029',
+    M8: 'IFIYCLSDT016',
+    M9: 'IFIYCLSDT0015',
+    M10: 'IFIYCLSDT034',
+    M11: 'IFIYCLSDT035',
+    M12: 'IFIYCLSDT024',
+    B1: 'IFIYCLSDT019',
+    B2: 'IFIYCLSDT010',
+    B3: 'IFIYCLSDT014',
+    B4: 'IFIYCLSDT037',
+    B5: 'IFIYCLSDT031',
+    B6: 'IFIYCLSDT017',
+    B7: 'IFIYCLSDT008',
+    B8: 'IFIYCLSDT003',
+    B9: 'IFIYCLSDT004',
+    B10: 'IFIYCLSDT018',
+    B11: 'IFIYCLSDT022',
+    B12: 'IFIYCLSDT009',
+    PCR10: 'IFIYCLSDT020',
+    PCR11: 'IFIYCLSDT013',
+    PCR12: 'IFIYCLSDT025',
+    PCR13: 'IFIYCLSDT011',
+    PCR14: 'IFIYCLSDT032',
 };
 
 function selectSystem(name) {
@@ -51,7 +56,7 @@ function selectSystem(name) {
     targetAnchor.click();
 
     shadowRoot.querySelectorAll('.badge').forEach((b) => {
-        if (b.innerText.toLowerCase() === name) {
+        if (b.innerText === name) {
             b.classList.remove('badge-soft');
         } else {
             b.classList.add('badge-soft');
@@ -64,7 +69,7 @@ function getSelectedNames() {
     const badges = shadowRoot.querySelectorAll('.badge');
     badges.forEach((b) => {
         if (b.querySelector('.checkbox').checked) {
-            names.push(b.innerText.toLowerCase());
+            names.push(b.innerText);
         }
     });
     return names;
@@ -113,7 +118,7 @@ function renderControls() {
                 (k) =>
                     `<div class="badge badge-soft badge-primary m-1">
                       <input type="checkbox" class="checkbox checkbox-xs" />
-                      <span class="name cursor-pointer uppercase">${k}</span>
+                      <span class="name cursor-pointer">${k}</span>
                     </div>`,
             )
             .join('')}
@@ -132,7 +137,7 @@ function renderControls() {
 }
 
 function badgeClick(e) {
-    const name = e.currentTarget.innerText.toLowerCase();
+    const name = e.currentTarget.innerText;
     selectSystem(name);
 }
 
