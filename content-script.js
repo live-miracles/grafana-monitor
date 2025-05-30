@@ -32,6 +32,19 @@ const SYSTEM_MAP = {
     PCR14: 'IFIYCLSDT032',
 };
 
+function selectSystemBadge(name) {
+    shadowRoot.querySelectorAll('.badge').forEach((b) => {
+        if (b.innerText.trim() === name.trim()) {
+            console.log(name, 'selected!!!');
+            b.classList.remove('badge-soft');
+            b.classList.add('badge-primary');
+        } else {
+            b.classList.add('badge-soft');
+            b.classList.remove('badge-primary');
+        }
+    });
+}
+
 function selectSystem(name) {
     const hostname = SYSTEM_MAP[name];
     const systemSelector = document.getElementsByClassName('css-10l6kcd')[0];
@@ -55,15 +68,7 @@ function selectSystem(name) {
     );
     targetAnchor.click();
 
-    shadowRoot.querySelectorAll('.badge').forEach((b) => {
-        if (b.innerText === name) {
-            b.classList.remove('badge-soft');
-            b.classList.add('badge-primary');
-        } else {
-            b.classList.add('badge-soft');
-            b.classList.remove('badge-primary');
-        }
-    });
+    selectSystemBadge(name);
 }
 
 function getSelectedNames() {
@@ -182,10 +187,10 @@ function setDocumentUrlParams() {
     const url = window.location.href;
     const searchParams = new URLSearchParams(new URL(url).search);
 
-    document.querySelectorAll('.url-param').forEach((input) => {
+    shadowRoot.querySelectorAll('.url-param').forEach((input) => {
         const value = searchParams.get(input.id);
         if (value) {
-            setInputValue(input.id, value);
+            setInputValue(input, value);
         }
     });
 }
@@ -202,6 +207,22 @@ function setDocumentRotateNames() {
     }
 }
 
+function updateCurrentName() {
+    const url = new URL(window.location.href);
+    const currentSystem = url.searchParams.get('var-hostname');
+    if (!currentSystem) {
+        return;
+    }
+    console.log('Current system:', currentSystem);
+
+    for (const [key, value] of Object.entries(SYSTEM_MAP)) {
+        if (value === currentSystem) {
+            console.log('Selecting system badge:', key);
+            selectSystemBadge(key);
+        }
+    }
+}
+
 function badgeClick(e) {
     const name = e.currentTarget.innerText;
     selectSystem(name);
@@ -211,4 +232,6 @@ const shadowRoot = createShadowRoot();
 renderControls();
 setDocumentUrlParams();
 setDocumentRotateNames();
+updateCurrentName();
+
 rotate();
