@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Grafana Monitor",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "description": "Grafana monitoring features",
     "host_permissions": ["http://192.168.99.191:3000/d/TEST567/live_stream_servers*"],
     "web_accessible_resources": [

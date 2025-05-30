@@ -11,8 +11,8 @@ const SYSTEM_MAP = {
     M8: 'IFIYCLSDT016',
     M9: 'IFIYCLSDT015',
     M10: 'IFIYCLSDT034',
-    M11: 'IFIYCLSDT035',
-    M12: 'IFIYCLSDT024',
+    M11: 'IBIYCLSDT024',
+    M12: 'IFIYCLSDT035',
     B1: 'IFIYCLSDT019',
     B2: 'IFIYCLSDT010',
     B3: 'IFIYCLSDT014',
@@ -23,13 +23,16 @@ const SYSTEM_MAP = {
     B8: 'IFIYCLSDT003',
     B9: 'IFIYCLSDT004',
     B10: 'IFIYCLSDT018',
-    B11: 'IFIYCLSDT022',
-    B12: 'IFIYCLSDT009',
-    PCR10: 'IFIYCLSDT020',
-    PCR11: 'IFIYCLSDT013',
-    PCR12: 'IFIYCLSDT025',
-    PCR13: 'IFIYCLSDT011',
-    PCR14: 'IFIYCLSDT032',
+    B11: 'IFIYCLSDT009',
+    B12: 'IFIYCLSDT022',
+    BPCR7: 'IFIYCLSDT021',
+    BPCR8: 'IFIYCLSDT006',
+    BPCR9: 'IBIYCLSDT039',
+    BPCR10: 'IFIYCLSDT020',
+    BPCR11: 'IFIYCLSDT013',
+    BPCR12: 'IFIYCLSDT025',
+    BPCR13: 'IFIYCLSDT011',
+    BPCR14: 'IFIYCLSDT032',
 };
 
 function selectSystemBadge(name) {
@@ -207,7 +210,7 @@ function setDocumentRotateNames() {
     }
 }
 
-function updateCurrentName() {
+function highlightCurrentName() {
     const url = new URL(window.location.href);
     const currentSystem = url.searchParams.get('var-hostname');
     if (!currentSystem) {
@@ -232,6 +235,6 @@ const shadowRoot = createShadowRoot();
 renderControls();
 setDocumentUrlParams();
 setDocumentRotateNames();
-updateCurrentName();
+highlightCurrentName();
 
 rotate();
