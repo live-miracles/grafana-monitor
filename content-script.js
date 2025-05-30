@@ -58,40 +58,39 @@ function selectSystem(name) {
     shadowRoot.querySelectorAll('.badge').forEach((b) => {
         if (b.innerText === name) {
             b.classList.remove('badge-soft');
+            b.classList.add('badge-primary');
         } else {
             b.classList.add('badge-soft');
+            b.classList.remove('badge-primary');
         }
     });
 }
 
 function getSelectedNames() {
-    const names = [];
-    const badges = shadowRoot.querySelectorAll('.badge');
-    badges.forEach((b) => {
-        if (b.querySelector('.checkbox').checked) {
-            names.push(b.innerText);
-        }
-    });
-    return names;
+    return Array.from(shadowRoot.querySelectorAll('.badge'))
+        .filter((b) => b.querySelector('.checkbox').checked)
+        .map((b) => b.innerText);
 }
 
-function getTime() {
+function rotate(index = 0, waitTime = -1) {
     const time = parseInt(shadowRoot.querySelector('.time').value);
-    return isNaN(time) ? 1 : Math.max(1, time);
-}
+    const rotationTime = isNaN(time) ? 1 : Math.max(1, time);
 
-function isRotateEnabled() {
-    return shadowRoot.querySelector('.toggle').checked;
-}
-
-function rotate(index = 0) {
-    const names = getSelectedNames();
-    const len = names.length;
-    const newIndex = len === 0 ? 0 : (index + 1) % len;
-    setTimeout(() => rotate(newIndex), getTime() * 1000);
-
-    if (names.length === 0 || !isRotateEnabled()) return;
-    selectSystem(names[index]);
+    const isRotationEnabled = shadowRoot.querySelector('.toggle').checked;
+    if (isRotationEnabled) {
+        if (waitTime === -1 || waitTime >= rotationTime) {
+            const names = getSelectedNames();
+            const len = names.length;
+            const newIndex = len === 0 ? 0 : (index + 1) % len;
+            setTimeout(() => rotate(newIndex, 0), 1000);
+            if (len === 0) return;
+            selectSystem(names[index % len]);
+        } else {
+            setTimeout(() => rotate(index, waitTime + 1), 1000);
+        }
+    } else {
+        setTimeout(rotate, 1000);
+    }
 }
 
 function createShadowRoot() {
@@ -110,30 +109,97 @@ function renderControls() {
     const controls = document.createElement('div');
     controls.setAttribute('data-theme', 'dark');
     controls.className =
-        'fixed top-0 left-1/2 -translate-x-1/2 px-4 py-2 rounded shadow-md z-50 w-[450px] bg-base-300 z-[9999]';
+        'fixed top-0 left-1/2 -translate-x-1/2 px-4 py-2 rounded shadow-md z-50 max-w-[500px] bg-base-300 z-[9999]';
     let innerHtml = `
       <div class="systems">
         ${Object.keys(SYSTEM_MAP)
             .map(
                 (k) =>
-                    `<div class="badge badge-soft badge-primary m-1">
-                      <input type="checkbox" class="checkbox checkbox-xs" />
+                    `<div class="badge badge-soft m-1">
+                      <input type="checkbox" class="name-rotate-checkbox checkbox checkbox-xs" />
                       <span class="name cursor-pointer">${k}</span>
                     </div>`,
             )
             .join('')}
       <div>
       <div class="my-3 mx-1">
-          <input type="checkbox" checked="checked" class="toggle mr-3" />
+          <input id="rotate-toggle" type="checkbox" checked="checked" class="url-param toggle mr-3" />
           Auto rotate time
-          <input type="number" min="1" placeholder="sec" class="time input w-16" value="5"/>
+          <input id="rotate-time" type="number" min="1" placeholder="sec" class="url-param time input w-16" value="5"/>
       </div>`;
     controls.innerHTML = innerHtml;
 
     controls.querySelectorAll('.name').forEach((elem) => {
         elem.onclick = badgeClick;
     });
+
+    controls
+        .querySelectorAll('.url-param')
+        .forEach((elem) => elem.addEventListener('change', updateUrlParam));
+
+    controls.querySelectorAll('.name-rotate-checkbox').forEach((elem) => {
+        elem.addEventListener('change', updateRotateNamesParam);
+    });
     shadowRoot.appendChild(controls);
+}
+
+function updateUrlParam(e) {
+    const name = e.currentTarget.id;
+    const value = getInputValue(e.currentTarget);
+
+    const url = new URL(window.location.href);
+    url.searchParams.set(name, value);
+    window.history.replaceState({}, '', url);
+}
+
+function updateRotateNamesParam() {
+    const url = new URL(window.location.href);
+    url.searchParams.set('rotate-names', getSelectedNames().join('.'));
+    window.history.replaceState({}, '', url);
+}
+
+function getInputValue(input) {
+    if (input.type === 'checkbox') {
+        return input.checked ? '1' : '0';
+    } else if (input.type === 'text' || input.type === 'number') {
+        return input.value;
+    } else {
+        console.error('Unexpected type: ' + input.type);
+        return null;
+    }
+}
+
+function setInputValue(input, value) {
+    if (input.type === 'checkbox') {
+        input.checked = value === '1';
+    } else if (input.type === 'text' || input.type === 'number') {
+        input.value = value;
+    } else {
+        console.error('Unknown input type: ' + input.type);
+    }
+}
+function setDocumentUrlParams() {
+    const url = window.location.href;
+    const searchParams = new URLSearchParams(new URL(url).search);
+
+    document.querySelectorAll('.url-param').forEach((input) => {
+        const value = searchParams.get(input.id);
+        if (value) {
+            setInputValue(input.id, value);
+        }
+    });
+}
+
+function setDocumentRotateNames() {
+    const url = new URL(window.location.href);
+    const rotateNames = url.searchParams.get('rotate-names');
+    if (rotateNames) {
+        const names = rotateNames.split('.');
+        shadowRoot.querySelectorAll('.name-rotate-checkbox').forEach((input) => {
+            const name = input.nextElementSibling.innerText;
+            input.checked = names.includes(name);
+        });
+    }
 }
 
 function badgeClick(e) {
@@ -143,4 +209,6 @@ function badgeClick(e) {
 
 const shadowRoot = createShadowRoot();
 renderControls();
+setDocumentUrlParams();
+setDocumentRotateNames();
 rotate();
